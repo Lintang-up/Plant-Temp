@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="icon"
+        href="https://lh3.googleusercontent.com/aida-public/AB6AXuAgzaXmTmpD86vrvrsbZfeeLafu5nO29rWTKOehmxRAfvdAqQfyKNiZE-Wdupsd4Ha4jrQLGvXQUuEfrsoN2xxeUvMu2SCowN0mXxUU84ozu7DsElikQdliPd_bc8O90lu2oWre8dan7yK0ydPKd1sjuddlVrkvMeIav-E0WVAbTeLq2AiPzS6DEFEGErKjQCSz1QjLK2y99LS500BmI6JoIiVh8Q4wMjCZKyjlDBcPtPZ0rB9RIlEvLIgKKid-tOgu0rvPLpNtF_0" />
+    <title>Plant Temperature Monitoring Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3bb079",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#141e19",
+                        "warning-yellow": "#FACC15",
+                        "critical-red": "#EF4444",
+                    },
+                    fontFamily: {
+                        display: ["Space Grotesk", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        /* Gaya Dasar Material Symbols */
+        .material-symbols-outlined {
+            font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+        }
+
+        .material-symbols-outlined.fill {
+            font-variation-settings: "FILL" 1;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-[#1E293B] dark:text-gray-200">
+    <div class="flex min-h-screen w-full">
+        <aside id="sidebar"
+            class="w-64 flex-col border-r border-gray-200/10 bg-[#121615] p-4 text-white transition-transform duration-300 ease-in-out z-40 fixed inset-y-0 left-0 transform -translate-x-full lg:flex lg:relative lg:translate-x-0">
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+                        data-alt="Plant Temp logo" style="
+                background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAgzaXmTmpD86vrvrsbZfeeLafu5nO29rWTKOehmxRAfvdAqQfyKNiZE-Wdupsd4Ha4jrQLGvXQUuEfrsoN2xxeUvMu2SCowN0mXxUU84ozu7DsElikQdliPd_bc8O90lu2oWre8dan7yK0ydPKd1sjuddlVrkvMeIav-E0WVAbTeLq2AiPzS6DEFEGErKjQCSz1QjLK2y99LS500BmI6JoIiVh8Q4wMjCZKyjlDBcPtPZ0rB9RIlEvLIgKKid-tOgu0rvPLpNtF_0');
+              "></div>
+                    <div class="flex flex-col">
+                        <h1 class="text-white text-base font-medium leading-normal">Plant Temp</h1>
+                        <p class="text-[#a2b3ab] text-sm font-normal leading-normal">Monitoring System</p>
+                    </div>
+                </div>
+                <nav class="flex flex-col gap-2 mt-4">
+                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10" href="index.html">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <p class="text-sm font-medium leading-normal">Dashboard</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10" href="analytics.html">
+                        <span class="material-symbols-outlined">analytics</span>
+                        <p class="text-sm font-medium leading-normal">Analytics</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-primary" href="#">
+                        <span class="material-symbols-outlined fill">table</span>
+                        <p class="text-sm font-medium leading-normal">Tables</p>
+                    </a>
+                </nav>
+            </div>
+            <div class="mt-auto">
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10" href="#">
+                    <span class="material-symbols-outlined">logout</span>
+                    <p class="text-sm font-medium leading-normal">Logout</p>
+                </a>
+            </div>
+        </aside>
+
+        <main class="flex-1 overflow-y-auto">
+
+            <div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-30 hidden lg:hidden" onclick="toggleSidebar()">
+            </div>
+
+            <div class="flex items-center justify-between p-4 bg-[#121615] sticky top-0 z-20 lg:hidden">
+                <div class="flex items-center gap-3">
+                    <button id="menu-button" class="text-white">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <h1 class="text-white text-base font-medium">Plant Temp</h1>
+                </div>
+                <button class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#2c3531] text-white">
+                    <span class="material-symbols-outlined">dark_mode</span>
+                </button>
+            </div>
+
+            <div class="p-6 lg:p-8">
+
+                <h2 class="text-white text-2xl font-bold mb-4">Sensor Data Log</h2>
+                <p class="text-[#a2b3ab] text-base font-normal mb-6">Daftar lengkap pembacaan sensor secara real-time.
+                </p>
+
+                <div class="mt-6 rounded-xl border border-[#404f48] bg-[#121615] overflow-hidden">
+                    <div class="p-6">
+                        <h3 class="text-white text-lg font-medium">Log Data</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="border-b border-t border-[#404f48] bg-[#2c3531]/30">
+                                <tr>
+                                    <th class="px-6 py-3 font-medium text-gray-300">Timestamp</th>
+                                    <th class="px-6 py-3 font-medium text-gray-300">Sensor ID</th>
+                                    <th class="px-6 py-3 font-medium text-gray-300">Temperature</th>
+                                    <th class="px-6 py-3 font-medium text-gray-300">Humidity</th>
+                                    <th class="px-6 py-3 font-medium text-gray-300">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sensorDataTableBody">
+                                <tr>
+                                    <td colspan="5" class="px-6 py-4 text-center text-gray-500">Memuat data...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="pagination-controls"
+                        class="flex justify-between items-center p-6 border-t border-[#404f48]">
+                        <button id="prev-page"
+                            class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#2c3531] text-white/80 hover:bg-[#3d4b46] disabled:opacity-50 disabled:cursor-not-allowed"
+                            disabled>
+                            <span class="material-symbols-outlined text-sm">arrow_back</span> Previous
+                        </button>
+                        <span id="page-info" class="text-white text-sm">Halaman 1 dari 1</span>
+                        <button id="next-page"
+                            class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#2c3531] text-white/80 hover:bg-[#3d4b46] disabled:opacity-50 disabled:cursor-not-allowed">
+                            Next <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // =================================================================
+        // 1. KONSTANTA & KONFIGURASI
+        // =================================================================
+
+        const SUPABASE_URL = "https://qrystrtfrixzdmpdqaji.supabase.co/rest/v1/Sensor";
+        const API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFyeXN0cnRmcml4emRtcGRxYWppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MTE4OTksImV4cCI6MjA3OTk4Nzg5OX0.64DSATRINkd3QCJZPaDczQj2H0rsJPAKKW4IyW3U6Ig";
+
+        // **VARIABEL GLOBAL UNTUK PAGINATION**
+        let currentPage = 1;
+        const rowsPerPage = 10;
+        let globalRawData = []; // Menyimpan data mentah yang sudah diurutkan secara global
+
+
+        // =================================================================
+        // 2. FUNGSI PEMBANTU WAKTU & STATUS
+        // =================================================================
+
+        /** Mengubah string waktu Supabase menjadi objek Date UTC yang valid. */
+        function parseSupabaseTime(supabaseTime) {
+            let isoString = supabaseTime.replace(' ', 'T');
+            isoString += 'Z';
+            return new Date(isoString);
+        }
+
+        /** Menentukan status (Normal/Warning/Critical) berdasarkan suhu dan kelembaban. */
+        function getStatus(temp, humi) {
+            if (temp > 30 || humi > 80) {
+                return { text: 'Critical', bg: 'bg-critical-red/20', textClass: 'text-critical-red', dot: 'bg-critical-red' };
+            } else if (temp > 25 || humi > 70) {
+                return { text: 'Warning', bg: 'bg-warning-yellow/20', textClass: 'text-warning-yellow', dot: 'bg-warning-yellow' };
+            } else {
+                return { text: 'Normal', bg: 'bg-primary/20', textClass: 'text-primary', dot: 'bg-primary' };
+            }
+        }
+
+
+        // =================================================================
+        // 3. FUNGSI PEMBANTU TABEL & PAGINATION
+        // =================================================================
+
+        /** Membuat satu baris tabel HTML (<tr>). */
+        function createTableRow(data) {
+            const { id, suhu, kelembaban, time } = data;
+            const status = getStatus(suhu, kelembaban);
+
+            const dateUtc = parseSupabaseTime(time);
+
+            const formattedTimestamp = dateUtc.toLocaleString('id-ID', {
+                year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit',
+                minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Asia/Jakarta'
+            }).replace(',', '');
+
+            return `
+            <tr class="border-b border-[#404f48]">
+                <td class="px-6 py-4 text-gray-300">${formattedTimestamp}</td>
+                <td class="px-6 py-4 text-gray-300">Sensor-${id}</td> 
+                <td class="px-6 py-4 text-white">${suhu.toFixed(1)}°C</td>
+                <td class="px-6 py-4 text-white">${kelembaban.toFixed(1)}%</td>
+                <td class="px-6 py-4">
+                    <span class="inline-flex items-center gap-1.5 rounded-full ${status.bg} px-2 py-1 text-xs font-medium ${status.textClass}">
+                        <span class="size-1.5 rounded-full ${status.dot}"></span>
+                        ${status.text}
+                    </span>
+                </td>
+            </tr>
+        `;
+        }
+
+        /** Memperbarui tabel log berdasarkan halaman saat ini. */
+        function updateTable() {
+            const tableBody = document.getElementById('sensorDataTableBody');
+            if (!tableBody) return;
+
+            // Hitung indeks awal dan akhir untuk halaman saat ini
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+
+            // Ambil data untuk halaman saat ini menggunakan data global
+            const paginatedData = globalRawData.slice(startIndex, endIndex);
+
+            let tableHtml = '';
+            if (paginatedData.length > 0) {
+                paginatedData.forEach((data) => {
+                    tableHtml += createTableRow(data);
+                });
+            } else {
+                tableHtml = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Tidak ada data sensor tersedia di halaman ini.</td></tr>';
+            }
+
+            tableBody.innerHTML = tableHtml;
+            updatePaginationControls(); // Panggil kontrol setelah tabel diperbarui
+        }
+
+
+        /** Memperbarui status tombol Previous/Next dan info halaman. */
+        function updatePaginationControls() {
+            const totalPages = Math.ceil(globalRawData.length / rowsPerPage);
+            const prevButton = document.getElementById('prev-page');
+            const nextButton = document.getElementById('next-page');
+            const pageInfo = document.getElementById('page-info');
+
+            if (!prevButton || !nextButton || !pageInfo) return;
+
+            // Nonaktifkan/Aktifkan tombol
+            prevButton.disabled = currentPage === 1;
+            nextButton.disabled = currentPage === totalPages || globalRawData.length === 0;
+
+            // Perbarui info halaman
+            pageInfo.textContent = `Halaman ${currentPage} dari ${totalPages}`;
+        }
+
+        /** Menangani klik tombol Previous. */
+        function goToPrevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                updateTable();
+            }
+        }
+
+        /** Menangani klik tombol Next. */
+        function goToNextPage() {
+            const totalPages = Math.ceil(globalRawData.length / rowsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                updateTable();
+            }
+        }
+
+
+        // =================================================================
+        // 4. FUNGSI UTAMA (FETCH & RENDER)
+        // =================================================================
+
+        /** Mengambil data mentah dari Supabase dan mengurutkannya dari terbaru. */
+        async function fetchData() {
+            try {
+                const response = await fetch(SUPABASE_URL, {
+                    headers: { apikey: API_KEY, Authorization: `Bearer ${API_KEY}` },
+                });
+
+                if (!response.ok) throw new Error(`Gagal mengambil data: ${response.statusText}`);
+
+                const data = await response.json();
+                if (!data || data.length === 0) throw new Error("Data kosong dari Supabase.");
+
+                // Urutkan berdasarkan kolom 'time'
+                return data.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+            } catch (error) {
+                console.error("Error dalam fetchData:", error);
+                throw error;
+            }
+        }
+
+        /** Fungsi utama untuk menjalankan seluruh proses dashboard. */
+        async function initDashboard() {
+            try {
+                const rawData = await fetchData();
+
+                // Simpan data mentah ke variabel global
+                globalRawData = rawData;
+
+                // Atur ulang ke halaman 1 setiap kali data baru diambil
+                currentPage = 1;
+
+                updateTable();
+
+            } catch (error) {
+                console.error("Gagal memuat dashboard:", error);
+
+                // Error fallback untuk tabel
+                const tableBody = document.getElementById('sensorDataTableBody');
+                if (tableBody) {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-critical-red">Gagal memuat data dari API. Periksa koneksi atau API Key.</td></tr>';
+                }
+            }
+        }
+
+
+        // =================================================================
+        // 5. FUNGSI SIDEBAR (Mobile)
+        // =================================================================
+
+        const sidebar = document.getElementById("sidebar");
+        const menuButton = document.getElementById("menu-button");
+        const overlay = document.getElementById("mobile-overlay");
+
+        function toggleSidebar() {
+            if (window.innerWidth < 1024) {
+                sidebar.classList.toggle("-translate-x-full");
+                overlay.classList.toggle("hidden");
+            }
+        }
+
+        if (menuButton) menuButton.addEventListener("click", toggleSidebar);
+
+        window.addEventListener("resize", () => {
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove("-translate-x-full");
+                overlay.classList.add("hidden");
+            } else {
+                if (!sidebar.classList.contains("-translate-x-full")) {
+                    sidebar.classList.add("-translate-x-full");
+                    overlay.classList.add("hidden");
+                }
+            }
+        });
+
+
+        // =================================================================
+        // 6. INISIALISASI
+        // =================================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initDashboard();
+            setInterval(initDashboard, 30000); // Refresh data setiap 30 detik
+
+            // Tambahkan Event Listener untuk tombol pagination
+            const prevButton = document.getElementById('prev-page');
+            const nextButton = document.getElementById('next-page');
+
+            if (prevButton) prevButton.addEventListener('click', goToPrevPage);
+            if (nextButton) nextButton.addEventListener('click', goToNextPage);
+        });
+    </script>
+</body>
+
+</html>

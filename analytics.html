@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="icon"
+        href="https://lh3.googleusercontent.com/aida-public/AB6AXuAgzaXmTmpD86vrvrsbZfeeLafu5nO29rWTKOehmxRAfvdAqQfyKNiZE-Wdupsd4Ha4jrQLGvXQUuEfrsoN2xxeUvMu2SCowN0mXxUU84ozu7DsElikQdliPd_bc8O90lu2oWre8dan7yK0ydPKd1sjuddlVrkvMeIav-E0WVAbTeLq2AiPzS6DEFEGErKjQCSz1QjLK2y99LS500BmI6JoIiVh8Q4wMjCZKyjlDBcPtPZ0rB9RIlEvLIgKKid-tOgu0rvPLpNtF_0" />
+    <title>Plant Temperature Monitoring Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3bb079",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#141e19",
+                        "warning-yellow": "#FACC15",
+                        "critical-red": "#EF4444",
+                    },
+                    fontFamily: {
+                        display: ["Space Grotesk", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+        }
+
+        .material-symbols-outlined.fill {
+            font-variation-settings: "FILL" 1;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-[#1E293B] dark:text-gray-200">
+    <div class="flex min-h-screen w-full">
+        <aside id="sidebar"
+            class="w-64 flex-col border-r border-gray-200/10 bg-[#121615] p-4 text-white transition-transform duration-300 ease-in-out z-40 fixed inset-y-0 left-0 transform -translate-x-full lg:flex lg:relative lg:translate-x-0">
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
+                        data-alt="Plant Temp logo" style="
+                background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAgzaXmTmpD86vrvrsbZfeeLafu5nO29rWTKOehmxRAfvdAqQfyKNiZE-Wdupsd4Ha4jrQLGvXQUuEfrsoN2xxeUvMu2SCowN0mXxUU84ozu7DsElikQdliPd_bc8O90lu2oWre8dan7yK0ydPKd1sjuddlVrkvMeIav-E0WVAbTeLq2AiPzS6DEFEGErKjQCSz1QjLK2y99LS500BmI6JoIiVh8Q4wMjCZKyjlDBcPtPZ0rB9RIlEvLIgKKid-tOgu0rvPLpNtF_0');
+              "></div>
+                    <div class="flex flex-col">
+                        <h1 class="text-white text-base font-medium leading-normal">Plant Temp</h1>
+                        <p class="text-[#a2b3ab] text-sm font-normal leading-normal">Monitoring System</p>
+                    </div>
+                </div>
+                <nav class="flex flex-col gap-2 mt-4">
+                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10" href="index.html">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <p class="text-sm font-medium leading-normal">Dashboard</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 text-primary" href="#">
+                        <span class="material-symbols-outlined fill">analytics</span>
+                        <p class="text-sm font-medium leading-normal">Analytics</p>
+                    </a>
+                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10" href="table.html">
+                        <span class="material-symbols-outlined fill">table</span>
+                        <p class="text-sm font-medium leading-normal">Tables</p>
+                    </a>
+                </nav>
+            </div>
+            <div class="mt-auto">
+                <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/10" href="#">
+                    <span class="material-symbols-outlined">logout</span>
+                    <p class="text-sm font-medium leading-normal">Logout</p>
+                </a>
+            </div>
+        </aside>
+
+        <main class="flex-1 overflow-y-auto">
+            <div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-30 hidden lg:hidden" onclick="toggleSidebar()">
+            </div>
+
+            <div class="flex items-center justify-between p-4 bg-[#121615] sticky top-0 z-20 lg:hidden">
+                <div class="flex items-center gap-3">
+                    <button id="menu-button" class="text-white">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <h1 class="text-white text-base font-medium">Plant Temp</h1>
+                </div>
+                <button class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#2c3531] text-white">
+                    <span class="material-symbols-outlined">dark_mode</span>
+                </button>
+            </div>
+
+            <div class="p-6 lg:p-8">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div class="flex flex-col gap-1">
+                        <h1 class="text-3xl font-black leading-tight tracking-tight text-white">Greenhouse A-1 Overview
+                        </h1>
+                        <p class="text-gray-400 dark:text-[#a2b3ab] text-base font-normal">Real-time environmental data
+                            and alerts.</p>
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button
+                            class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-[#2c3531] px-4">
+                            <p class="text-white text-sm font-medium">Last 24h</p>
+                            <span class="material-symbols-outlined text-white text-lg">expand_more</span>
+                        </button>
+                        <button
+                            class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-[#2c3531] px-4">
+                            <p class="text-white text-sm font-medium">Last 7 Days</p>
+                        </button>
+                        <button
+                            class="lg:flex hidden h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#2c3531] text-white">
+                            <span class="material-symbols-outlined">dark_mode</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6 md:grid-cols-2 lg:grid-cols-4">
+                    <div class="flex flex-col gap-2 rounded-xl p-6 border border-[#404f48] bg-[#121615]">
+                        <p class="text-white text-base font-medium">Current Temperature</p>
+                        <p id="currentTemp"
+                            class="text-primary text-3xl md:text-4xl font-bold leading-tight tracking-tight">--</p>
+                        <p class="text-gray-400 dark:text-[#a2b3ab] text-sm">Last updated: <span
+                                id="currentTimestamp">--</span></p>
+                    </div>
+
+                    <div class="flex flex-col gap-2 rounded-xl p-6 border border-[#404f48] bg-[#121615]">
+                        <p class="text-white text-base font-medium">Average Temp (24h)</p>
+                        <p id="avgTemp" class="text-white tracking-tight text-2xl font-bold">--</p>
+                        <p id="avgTempChange" class="text-[#fa5538] text-base font-medium">--</p>
+                    </div>
+
+                    <div class="flex flex-col gap-2 rounded-xl p-6 border border-[#404f48] bg-[#121615]">
+                        <p class="text-white text-base font-medium">Highest Temp (24h)</p>
+                        <p id="highTemp" class="text-white tracking-tight text-2xl font-bold">--</p>
+                        <p id="highTempChange" class="text-primary text-base font-medium">--</p>
+                    </div>
+
+                    <div class="flex flex-col gap-2 rounded-xl p-6 border border-[#404f48] bg-[#121615]">
+                        <p class="text-white text-base font-medium">Humidity Level</p>
+                        <p id="currentHumi" class="text-white tracking-tight text-2xl font-bold">--</p>
+                        <p id="humiChange" class="text-primary text-base font-medium">--</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+                    <div class="flex flex-col gap-2 rounded-xl border border-[#404f48] p-6 lg:col-span-2 bg-[#121615]">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <p class="text-white text-lg font-medium">Temperature Trend</p>
+                                <p class="text-gray-400 dark:text-[#a2b3ab] text-sm">Last 24 hours</p>
+                            </div>
+                            <p id="tempTrendChange" class="text-primary text-base font-medium">+1.2%</p>
+                        </div>
+
+                        <div class="flex min-h-[200px] md:min-h-[250px] flex-1 flex-col justify-end gap-8 py-4">
+                            <svg id="temperatureChart" fill="none" height="100%" preserveaspectratio="none"
+                                viewbox="0 0 472 150" width="100%" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <lineargradient gradientunits="userSpaceOnUse" id="paint0_linear_1131_5935" x1="236"
+                                        x2="236" y1="1" y2="149">
+                                        <stop stop-color="#3bb079" stop-opacity="0.3"></stop>
+                                        <stop offset="1" stop-color="#3bb079" stop-opacity="0"></stop>
+                                    </lineargradient>
+                                </defs>
+
+                                <path id="chartFillPath" fill="url(#paint0_linear_1131_5935)" d="M0 149H472V149Z">
+                                </path>
+                                <path id="chartLinePath" stroke="#3bb079" stroke-linecap="round" stroke-width="3"
+                                    d="M0 150"></path>
+
+                            </svg>
+                            <div id="chartTimeLabels" class="flex justify-between">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-4 rounded-xl border border-[#404f48] p-6 bg-[#121615]">
+                        <h3 class="text-white text-lg font-medium">Alerts</h3>
+                        <div class="flex flex-col gap-4">
+                            <div class="flex items-start gap-3">
+                                <div
+                                    class="flex size-8 items-center justify-center rounded-full bg-primary/20 text-primary">
+                                    <span class="material-symbols-outlined fill text-lg">check_circle</span>
+                                </div>
+                                <div class="flex flex-col">
+                                    <p class="font-medium text-white">Normal Conditions</p>
+                                    <p class="text-sm text-gray-400 dark:text-[#a2b3ab]">
+                                        Temperature ≤ 25°C — all sensor values are within safe thresholds.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3">
+                                <div
+                                    class="flex size-8 items-center justify-center rounded-full bg-warning-yellow/20 text-warning-yellow">
+                                    <span class="material-symbols-outlined">warning</span>
+                                </div>
+                                <div class="flex flex-col">
+                                    <p class="font-medium text-white">Warning Temperature</p>
+                                    <p class="text-sm text-gray-400 dark:text-[#a2b3ab]">
+                                        Temperature between 25°C – 30°C — sensor indicates elevated conditions.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3">
+                                <div
+                                    class="flex size-8 items-center justify-center rounded-full bg-critical-red/20 text-critical-red">
+                                    <span class="material-symbols-outlined fill text-lg">error</span>
+                                </div>
+                                <div class="flex flex-col">
+                                    <p class="font-medium text-white">High Temperature</p>
+                                    <p class="text-sm text-gray-400 dark:text-[#a2b3ab]">
+                                        Temperature > 30°C — sensor exceeded the critical threshold!
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 rounded-xl border border-[#404f48] bg-[#121615] overflow-hidden">
+                    <div class="p-6">
+                        <h3 class="text-white text-lg font-medium">Sensor Data Log</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="border-b border-t border-[#404f48] bg-[#2c3531]/30">
+                                <tr>
+                                    <th class="px-6 py-3 font-medium text-gray-300">Timestamp</th>
+                                    <th class="px-6 py-3 font-medium text-gray-300">Sensor ID</th>
+                                    <th class="px-6 py-3 font-medium text-gray-300">Temperature</th>
+                                    <th class="px-6 py-3 font-medium text-gray-300">Humidity</th>
+                                    <th class="px-6 py-3 font-medium text-gray-300">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sensorDataTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // =================================================================
+        // 1. KONSTANTA & KONFIGURASI
+        // =================================================================
+
+        const SUPABASE_URL = "https://qrystrtfrixzdmpdqaji.supabase.co/rest/v1/Sensor";
+        const API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFyeXN0cnRmcml4emRtcGRxYWppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0MTE4OTksImV4cCI6MjA3OTk4Nzg5OX0.64DSATRINkd3QCJZPaDczQj2H0rsJPAKKW4IyW3U6Ig";
+        const SVG_WIDTH = 472;
+        const SVG_HEIGHT = 150;
+
+
+        // =================================================================
+        // 2. FUNGSI PEMBANTU WAKTU & STATUS
+        // =================================================================
+
+        /** Mengubah string waktu Supabase menjadi objek Date UTC yang valid. */
+        function parseSupabaseTime(supabaseTime) {
+            let isoString = supabaseTime.replace(' ', 'T');
+            isoString += 'Z';
+            return new Date(isoString);
+        }
+
+        /** Menghitung selisih waktu untuk tampilan "X mins ago" (WIB). */
+        function formatTimeAgo(timestamp) {
+            const now = new Date();
+            const past = parseSupabaseTime(timestamp);
+            const seconds = Math.floor((now - past) / 1000);
+
+            if (seconds < 60) return `${seconds} secs ago`;
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes} mins ago`;
+            const hours = Math.floor(minutes / 60);
+
+            if (hours < 24) return `${hours} hours ago`;
+
+            return past.toLocaleString('id-ID', { day: '2-digit', month: 'short', timeZone: 'Asia/Jakarta' });
+        }
+
+        /** Mengubah string waktu Supabase menjadi format jam WIB (contoh: 09:30). */
+        function formatHourWIB(timestamp) {
+            const dateUtc = parseSupabaseTime(timestamp);
+
+            // Gunakan opsi untuk mendapatkan format Jam:Menit dalam zona waktu WIB
+            const options = {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false, // Format 24 jam (00:00 - 23:59)
+                timeZone: 'Asia/Jakarta'
+            };
+
+            // Hasilnya: "14.30" atau "09.05", kita ganti titik menjadi titik dua (:)
+            return dateUtc.toLocaleString('id-ID', options).replace('.', ':');
+        }
+
+        /** Menentukan status (Normal/Warning/Critical) berdasarkan suhu dan kelembaban. */
+        function getStatus(temp, humi) {
+            if (temp > 30 || humi > 80) {
+                return { text: 'Critical', bg: 'bg-critical-red/20', textClass: 'text-critical-red', dot: 'bg-critical-red' };
+            } else if (temp > 25 || humi > 70) {
+                return { text: 'Warning', bg: 'bg-warning-yellow/20', textClass: 'text-warning-yellow', dot: 'bg-warning-yellow' };
+            } else {
+                return { text: 'Normal', bg: 'bg-primary/20', textClass: 'text-primary', dot: 'bg-primary' };
+            }
+        }
+
+
+        // =================================================================
+        // 3. FUNGSI PEMBANTU GRAFIK & TABEL
+        // =================================================================
+
+        /** Mengkonversi array suhu ke string path SVG (koordinat X, Y yang diskalakan). */
+        function createSvgPath(temperatures) {
+            if (temperatures.length < 2) return "";
+
+            const minChartTemp = Math.floor(Math.min(...temperatures) - 1);
+            const maxChartTemp = Math.ceil(Math.max(...temperatures) + 1);
+            const rangeY = maxChartTemp - minChartTemp;
+
+            const stepX = SVG_WIDTH / (temperatures.length - 1);
+            let path = "";
+
+            temperatures.forEach((temp, index) => {
+                let scaledY = (rangeY === 0)
+                    ? SVG_HEIGHT / 2
+                    : SVG_HEIGHT - ((temp - minChartTemp) / rangeY) * SVG_HEIGHT;
+
+                const x = index * stepX;
+
+                path += (index === 0) ? `M${x} ${scaledY}` : `L${x} ${scaledY}`;
+            });
+
+            const linePath = path;
+            const fillPath = `${linePath} L${SVG_WIDTH} ${SVG_HEIGHT} L0 ${SVG_HEIGHT} Z`;
+
+            return { linePath, fillPath };
+        }
+
+        /** Membuat satu baris tabel HTML (<tr>). */
+        function createTableRow(data) {
+            const { id, suhu, kelembaban, time } = data;
+            const status = getStatus(suhu, kelembaban);
+
+            const dateUtc = parseSupabaseTime(time);
+            const formattedTimestamp = dateUtc.toLocaleString('id-ID', {
+                year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit',
+                minute: '2-digit', second: '2-digit', hour12: false, timeZone: 'Asia/Jakarta'
+            }).replace(',', '');
+
+            return `
+        <tr class="border-b border-[#404f48]">
+            <td class="px-6 py-4 text-gray-300">${formattedTimestamp}</td>
+            <td class="px-6 py-4 text-gray-300">Sensor-${id}</td> 
+            <td class="px-6 py-4 text-white">${suhu.toFixed(1)}°C</td>
+            <td class="px-6 py-4 text-white">${kelembaban.toFixed(1)}%</td>
+            <td class="px-6 py-4">
+                <span class="inline-flex items-center gap-1.5 rounded-full ${status.bg} px-2 py-1 text-xs font-medium ${status.textClass}">
+                    <span class="size-1.5 rounded-full ${status.dot}"></span>
+                    ${status.text}
+                </span>
+            </td>
+        </tr>
+    `;
+        }
+
+        /** Memperbarui tabel log dengan 4 data terbaru. */
+        function updateTable(rawData) {
+            const tableBody = document.getElementById('sensorDataTableBody');
+            tableBody.innerHTML = '';
+            const recentData = rawData.slice(0, 4);
+
+            let tableHtml = '';
+            recentData.forEach((data) => {
+                tableHtml += createTableRow(data);
+            });
+            tableBody.innerHTML = tableHtml;
+        }
+
+        /** Memperbarui label waktu di bawah grafik berdasarkan data sensor. */
+        function updateChartTimeLabels(rawData) {
+            const labelContainer = document.getElementById('chartTimeLabels');
+            labelContainer.innerHTML = '';
+
+            // Ambil 15 data terbaru, seperti yang digunakan di processData (diurutkan dari lama ke baru)
+            // PENTING: Untuk menampilkan urutan dari KIRI (lama) ke KANAN (baru),
+            // kita gunakan chartData yang sudah diurutkan di processData.
+
+            // Kita panggil processData di initDashboard, jadi kita bisa ambil 15 data terbaru dari rawData
+            const chartData = rawData.slice(0, 15).sort((a, b) => new Date(a.time) - new Date(b.time));
+
+            if (chartData.length === 0) return;
+
+            // Tentukan indeks data yang akan dijadikan label
+            // Kita akan membuat 4 label: Mulai, Tengah, Tengah-Lagi, Selesai (Now)
+            const totalData = chartData.length;
+            const interval = Math.floor(totalData / 3);
+
+            const indices = [
+                0, // Paling Lama (Kiri)
+                interval,
+                interval * 2,
+                totalData - 1 // Paling Baru / Now (Kanan)
+            ];
+
+            let labelsHtml = '';
+
+            indices.forEach(index => {
+                // Pastikan indeks valid
+                if (index < totalData && index >= 0) {
+                    const dataPoint = chartData[index];
+                    let labelText;
+
+                    if (index === totalData - 1) {
+                        // Label paling kanan selalu "Now" atau waktu terbaru
+                        labelText = 'Now';
+                    } else {
+                        // Label lainnya adalah waktu dari titik data
+                        labelText = formatHourWIB(dataPoint.time);
+                    }
+
+                    labelsHtml += `<p class="text-[#a2b3ab] text-[13px] font-bold tracking-[0.015em]">${labelText}</p>`;
+                }
+            });
+
+            labelContainer.innerHTML = labelsHtml;
+        }
+
+
+
+        // =================================================================
+        // 4. FUNGSI UTAMA (FETCH, PROCESS, RENDER)
+        // =================================================================
+
+        /** Mengambil data mentah dari Supabase dan mengurutkannya dari terbaru. */
+        async function fetchData() {
+            try {
+                const response = await fetch(SUPABASE_URL, {
+                    headers: { apikey: API_KEY, Authorization: `Bearer ${API_KEY}` },
+                });
+
+                if (!response.ok) throw new Error(`Gagal mengambil data: ${response.statusText}`);
+
+                const data = await response.json();
+                if (!data || data.length === 0) throw new Error("Data kosong dari Supabase.");
+
+                // Urutkan berdasarkan kolom 'time'
+                return data.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+            } catch (error) {
+                console.error("Error dalam fetchData:", error);
+                throw error;
+            }
+        }
+
+        /** Menghitung statistik dan menyiapkan data untuk rendering. */
+        function processData(data) {
+            const latestData = data[0];
+            const { suhu: currentSuhu, kelembaban: currentKelembaban, time: timestamp } = latestData;
+
+            const allTemperatures = data.map(item => item.suhu);
+
+            const sumTemp = allTemperatures.reduce((acc, temp) => acc + temp, 0);
+            const avgTemp = sumTemp / allTemperatures.length;
+            const highTemp = Math.max(...allTemperatures);
+
+            // Ambil 15 data terbaru untuk grafik
+            const chartData = data.slice(0, 15).sort((a, b) => new Date(a.time) - new Date(b.time));
+            const chartTemperatures = chartData.map(item => item.suhu);
+
+            return { currentSuhu, avgTemp, highTemp, currentKelembaban, timestamp, chartTemperatures };
+        }
+
+        /** Memperbarui semua elemen UI (Kartu & Grafik). */
+        function updateUI(processedData) {
+            const { currentSuhu, avgTemp, highTemp, currentKelembaban, timestamp, chartTemperatures } = processedData;
+
+            // Update Kartu Data
+            document.getElementById("currentTemp").textContent = `${currentSuhu.toFixed(1)}°C`;
+            document.getElementById("avgTemp").textContent = `${avgTemp.toFixed(1)}°C`;
+            document.getElementById("highTemp").textContent = `${highTemp.toFixed(1)}°C`;
+            document.getElementById("currentHumi").textContent = `${currentKelembaban.toFixed(1)}%`;
+            document.getElementById("currentTimestamp").textContent = formatTimeAgo(timestamp);
+            document.getElementById("avgTempChange").textContent = "N/A";
+            document.getElementById("highTempChange").textContent = "N/A";
+            document.getElementById("humiChange").textContent = "N/A";
+            document.getElementById("tempTrendChange").textContent = "N/A";
+
+            // Update Grafik SVG
+            if (chartTemperatures.length >= 2) {
+                const { linePath, fillPath } = createSvgPath(chartTemperatures);
+                document.getElementById("chartLinePath").setAttribute('d', linePath);
+                document.getElementById("chartFillPath").setAttribute('d', fillPath);
+            } else {
+                const defaultPath = `M0 ${SVG_HEIGHT / 2} L${SVG_WIDTH} ${SVG_HEIGHT / 2}`;
+                document.getElementById("chartLinePath").setAttribute('d', defaultPath);
+                document.getElementById("chartFillPath").setAttribute('d', defaultPath + ` L${SVG_WIDTH} ${SVG_HEIGHT} L0 ${SVG_HEIGHT} Z`);
+            }
+        }
+
+        /** Fungsi utama untuk menjalankan seluruh proses dashboard. */
+        async function initDashboard() {
+            try {
+                const rawData = await fetchData();
+                const processedData = processData(rawData);
+
+                updateUI(processedData);
+                updateTable(rawData);
+                updateChartTimeLabels(rawData);
+
+            } catch (error) {
+                console.error("Gagal memuat dashboard:", error);
+
+                // Error fallback
+                const errorText = "--";
+                document.getElementById("currentTemp").textContent = errorText;
+                document.getElementById("avgTemp").textContent = errorText;
+                document.getElementById("highTemp").textContent = errorText;
+                document.getElementById("currentHumi").textContent = errorText;
+                document.getElementById("currentTimestamp").textContent = "Error";
+                document.getElementById("chartLinePath").setAttribute('d', `M0 75 L472 75`);
+                document.getElementById("chartFillPath").setAttribute('d', `M0 75 L472 75 L472 150 L0 150 Z`);
+            }
+        }
+
+
+        // =================================================================
+        // 5. FUNGSI SIDEBAR (Mobile)
+        // =================================================================
+
+        const sidebar = document.getElementById("sidebar");
+        const menuButton = document.getElementById("menu-button");
+        const overlay = document.getElementById("mobile-overlay");
+
+        function toggleSidebar() {
+            if (window.innerWidth < 1024) {
+                sidebar.classList.toggle("-translate-x-full");
+                overlay.classList.toggle("hidden");
+            }
+        }
+
+        menuButton.addEventListener("click", toggleSidebar);
+
+        window.addEventListener("resize", () => {
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove("-translate-x-full");
+                overlay.classList.add("hidden");
+            } else {
+                if (!sidebar.classList.contains("-translate-x-full")) {
+                    sidebar.classList.add("-translate-x-full");
+                    overlay.classList.add("hidden");
+                }
+            }
+        });
+
+
+        // =================================================================
+        // 6. INISIALISASI
+        // =================================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initDashboard();
+            setInterval(initDashboard, 30000); // Refresh data setiap 30 detik
+        });
+    </script>
+</body>
+
+</html>
