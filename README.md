@@ -87,23 +87,3 @@ Ikuti langkah-langkah sederhana ini untuk menjalankan proyek Anda:
 
 Proyek ini bersifat *open-source*. Setiap kontribusi, laporan *bug*, atau saran sangat disambut baik!
 
-1.  *Fork* repositori ini.
-2.  Buat *branch* baru: `git checkout -b feature/nama-fitur-anda`.
-3.  *Commit* perubahan Anda: `git commit -m 'feat: Tambahkan fitur X'`.
-4.  *Push* ke *branch*: `git push origin feature/nama-fitur-anda`.
-5.  Buat Pull Request baru.
-
-## 📜 Lisensi
-
-Proyek ini dilisensikan di bawah Lisensi MIT. Lihat file [LICENSE] untuk detail lebih lanjut.
-
-***
-
-### File-file Tambahan yang Disarankan
-
-Untuk membuat repositori lebih lengkap, pertimbangkan untuk menyertakan file-file ini (jika belum ada):
-
-1.  **`esp8266_code.ino`**: File utama kode Arduino untuk ESP8266.
-2.  **`LICENSE`**: File lisensi (MIT disarankan).
-3.  **`index.html`**: File utama *dashboard* web.
-4.  **`WIRING.md`** (Opsional): Diagram atau deskripsi singkat tentang cara menghubungkan DHT11 ke ESP8266.
